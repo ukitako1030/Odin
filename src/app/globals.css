@@ -245,3 +245,7 @@
  .insight-panel{min-height:275px}
  .raven-panel p{max-width:88%;font-size:11px}
 }
+
+/* Public-edition rider: keep all four hooves on the existing rock summit.
+   Coordinates are relative to the same 1536x1024 scene on desktop/mobile. */
+.hero-odin{left:40.365%;top:10.8%;width:15.299%}
