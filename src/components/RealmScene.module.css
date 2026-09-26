@@ -1,0 +1,11 @@
+.scene { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; isolation:isolate; }
+.art { object-fit:cover; object-position:72% center; }
+.light { position:absolute; inset:0 0 0 30%; z-index:1; mix-blend-mode:screen; }
+.shade { position:absolute; inset:0; z-index:2; background:linear-gradient(90deg,#0c1321f5 0%,#0c1321d4 28%,#0c132146 64%,#0c132115),linear-gradient(0deg,#0c132178,transparent 50%); }
+.well .art,.quill .art { object-position:right 60%; }
+.well .shade,.quill .shade { background:linear-gradient(90deg,#101829f2 0%,#101829d4 35%,#10182935 70%,#10182908); }
+@media(max-width:700px){
+ .archive .art,.compass .art { object-position:76% center; }
+ .shade { background:linear-gradient(90deg,#0c1321ed,#0c13218c 55%,#0c13211a),linear-gradient(0deg,#0c13217a,transparent); }
+ .well .shade,.quill .shade { background:linear-gradient(90deg,#101829ee,#101829bc 43%,#10182935 78%); }
+}

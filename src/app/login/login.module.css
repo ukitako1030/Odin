@@ -1,0 +1,30 @@
+.screen { min-height:100svh; display:grid; place-items:center; position:relative; overflow:hidden; background:#0c1119; color:#f4f4f0; font-family:inherit; padding:24px; }
+.screen::before { content:''; position:absolute; inset:-20%; background:radial-gradient(ellipse at 48% 36%,#283b48 0%,#111923 38%,transparent 67%); pointer-events:none; }
+.orbit { position:absolute; width:min(74vw,710px); aspect-ratio:1; border:1px solid rgba(181,206,211,.11); border-radius:50%; box-shadow:0 0 0 95px rgba(181,206,211,.025),0 0 0 190px rgba(181,206,211,.018); transform:translateY(-9%); pointer-events:none; }
+.card { width:min(100%,420px); position:relative; padding:49px 44px 36px; background:rgba(22,31,42,.86); border:1px solid rgba(190,210,217,.13); border-radius:22px; box-shadow:0 28px 85px #0008; backdrop-filter:blur(24px); }
+.mark { width:48px; height:48px; display:grid; place-items:center; border-radius:15px; background:#c5dacd; color:#1b312c; font-size:25px; margin-bottom:34px; }
+.eyebrow { color:#9eb7b5; letter-spacing:.22em; font-size:10px; font-weight:700; margin:0 0 14px; }
+.card h1 { font-size:30px; font-weight:650; letter-spacing:.02em; margin:0 0 10px; line-height:1.3; }
+.description { color:#aebcc5; font-size:14px; line-height:1.8; margin:0 0 34px; }
+.card label { display:block; font-size:12px; color:#c3d0d2; margin-bottom:10px; font-weight:600; }
+.card input { width:100%; height:49px; border-radius:10px; border:1px solid #52626c; background:#101922; color:#fff; padding:0 15px; font:inherit; outline:none; transition:border-color .18s,box-shadow .18s; }
+.card input:focus { border-color:#c5dacd; box-shadow:0 0 0 3px #c5dacd33; }
+.card button { width:100%; margin-top:22px; height:49px; padding:0 16px; border:0; border-radius:10px; color:#172620; background:#cee1d3; cursor:pointer; display:flex; align-items:center; justify-content:space-between; font:inherit; font-size:14px; font-weight:700; transition:background .2s,transform .2s; }
+.card button:hover:not(:disabled) { background:#e1efdf; transform:translateY(-1px); }
+.card button:disabled { opacity:.65; cursor:wait; }
+.card button span { font-size:20px; font-weight:400; }
+.error { color:#ffb9b3; font-size:12px; margin:12px 0 -9px; line-height:1.6; }
+.footnote { border-top:1px solid #ffffff1b; margin:38px 0 0; padding-top:20px; color:#80929b; text-align:center; font-size:11px; }
+@media(max-width:480px){.card{padding:35px 27px 27px}.card h1{font-size:26px}}
+
+.screen::before{display:none}
+.card{z-index:2;background:linear-gradient(145deg,#111624ee,#0d1420ed);border-color:#8d87a34a;border-radius:5px;box-shadow:0 24px 100px #0009}
+.wordmark{display:flex;justify-content:center;margin:0 auto 34px}
+.eyebrow{color:#aba2c5;font-size:9px;letter-spacing:.23em}
+.card h1{font-family:var(--serif);font-size:27px;font-weight:500;letter-spacing:.06em}
+.description{font-size:12px;color:#a4b0c7}
+.card input{background:#090f1b;border-color:#444a64;border-radius:4px;font-size:16px}
+.card input:focus{border-color:#b7a7d2;box-shadow:0 0 0 3px #a99cc51c}
+.card button{background:linear-gradient(120deg,#9484ac,#625c88);border:1px solid #b3a1cc;color:#f9f6ff;border-radius:4px;font-weight:500}
+.card button:hover:not(:disabled){background:linear-gradient(120deg,#a292ba,#726995)}
+.footnote{color:#8c95ad}

@@ -1,0 +1,37 @@
+import { test, expect } from '@playwright/test';
+
+test('mobile bottom navigation, source disclosure and editing work at narrow widths', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const nav = page.getByRole('navigation', { name: 'スマートフォンのナビゲーション' });
+  await expect(nav).toBeVisible();
+  await nav.getByRole('button', { name: '新しい記録を作成' }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel('種類').selectOption('knowledge');
+  await dialog.getByLabel('タイトル', { exact: true }).fill('スマホ検証の記憶');
+  await dialog.getByLabel('本文', { exact: false }).fill('スマホで残した記録を、後から読み返す。');
+  await dialog.getByLabel('出典', { exact: false }).fill('https://example.com/mobile-source');
+  await dialog.getByRole('button', { name: '記録する', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await page.reload();
+  await nav.getByRole('button', { name: '記録を検索' }).click();
+  await dialog.getByRole('textbox').fill('スマホ検証の記憶');
+  await dialog.getByRole('button', { name: /スマホ検証の記憶/ }).click();
+  await expect(dialog.getByText('スマホで残した記録を、後から読み返す。')).toBeVisible();
+  await expect(dialog.getByRole('link', { name: /mobile-source/ })).not.toBeVisible();
+  await dialog.getByText('出典を表示', { exact: true }).click();
+  await expect(dialog.getByRole('link', { name: /mobile-source/ })).toBeVisible();
+  await dialog.getByRole('button', { name: '編集', exact: true }).click();
+  await page.setViewportSize({ width: 390, height: 460 });
+  await dialog.getByLabel('タイトル', { exact: true }).fill('スマホ検証の記憶・更新');
+  await dialog.getByRole('button', { name: '変更を保存' }).click();
+  await expect(dialog).toHaveCount(0);
+  await page.setViewportSize({ width: 320, height: 568 });
+  await nav.getByRole('button', { name: 'タスク', exact: true }).click();
+  await expect(nav.getByRole('button', { name: 'タスク', exact: true })).toHaveAttribute('aria-current', 'page');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await nav.getByRole('button', { name: 'その他の場所を開く' }).click();
+  await page.getByRole('button', { name: 'ナレッジ', exact: true }).click();
+  await expect(page.getByRole('button', { name: /スマホ検証の記憶・更新/ })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

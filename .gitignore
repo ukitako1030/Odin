@@ -1,0 +1,13 @@
+node_modules/
+.next*/
+.env*
+!.env.example
+.odin/
+.vercel/
+.odin-public-sync.json
+test-results/
+playwright-report/
+docs/screenshots/*
+!docs/screenshots/.gitkeep
+*.tsbuildinfo
+next-env.d.ts

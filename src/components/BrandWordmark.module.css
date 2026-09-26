@@ -1,0 +1,90 @@
+.wordmark {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  flex: none;
+  width: 100%;
+  max-width: var(--odin-wordmark-width, 196px);
+  vertical-align: middle;
+  line-height: 1;
+  user-select: none;
+}
+
+.compact {
+  width: 76px;
+  max-width: 76px;
+}
+
+.imageWrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 1;
+  overflow: hidden;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: brightness(1.22) contrast(1.08) drop-shadow(0 1px 4px rgba(161, 186, 235, .18));
+}
+
+.shimmer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: url('/assets/odin-wordmark-silver.webp');
+  mask-image: url('/assets/odin-wordmark-silver.webp');
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 42%;
+  height: 100%;
+  opacity: .36;
+  background: linear-gradient(90deg, transparent 0%, rgba(172, 205, 247, .12) 34%, rgba(220, 236, 255, .74) 50%, rgba(153, 189, 240, .13) 66%, transparent 100%);
+  transform: translate3d(-145%, 0, 0) skewX(-12deg);
+  animation: silverCrossing 17s linear infinite;
+  animation-play-state: paused;
+}
+
+.wordmark[data-animate='true'] .shimmer::before {
+  animation-play-state: running;
+}
+
+.caption {
+  display: block;
+  margin-top: -2px;
+  color: #b3bdd4;
+  font: 8px/1.2 Georgia, serif;
+  letter-spacing: .24em;
+  white-space: nowrap;
+  text-shadow: 0 1px 9px rgba(102, 126, 180, .25);
+}
+
+@keyframes silverCrossing {
+  from { transform: translate3d(-145%, 0, 0) skewX(-12deg); opacity: .27; }
+  45% { opacity: .43; }
+  to { transform: translate3d(345%, 0, 0) skewX(-12deg); opacity: .27; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer::before { animation: none !important; opacity: 0; }
+}
+
+:global(.motion-off) .shimmer::before,
+:global(.motion-off).wordmark .shimmer::before {
+  animation: none !important;
+  opacity: 0;
+}

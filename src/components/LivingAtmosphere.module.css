@@ -1,0 +1,153 @@
+.scene {
+  --light: 171, 155, 224;
+  --second-light: 108, 150, 216;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  isolation: isolate;
+  z-index: 1;
+}
+
+.hero {
+  --light: 170, 147, 221;
+  --second-light: 99, 157, 215;
+}
+
+.archive {
+  --light: 164, 151, 225;
+  --second-light: 134, 173, 212;
+}
+
+.forge {
+  --light: 220, 149, 83;
+  --second-light: 246, 200, 127;
+}
+
+.well {
+  --light: 133, 144, 228;
+  --second-light: 166, 185, 234;
+}
+
+.scene > span {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  animation-play-state: paused;
+}
+
+.scene[data-animate='true'] > span {
+  animation-play-state: running;
+}
+
+.glow {
+  width: 62%;
+  height: 78%;
+  opacity: .26;
+  background: radial-gradient(ellipse at center, rgba(var(--light), .27) 0%, rgba(var(--light), .1) 36%, transparent 72%);
+  animation: glowBreath 15s ease-in-out infinite alternate;
+}
+
+.glowOne {
+  left: -20%;
+  top: 0;
+}
+
+.glowTwo {
+  right: -23%;
+  bottom: -30%;
+  width: 70%;
+  opacity: .2;
+  background: radial-gradient(ellipse at center, rgba(var(--second-light), .26) 0%, rgba(var(--second-light), .08) 40%, transparent 73%);
+  animation-duration: 19s;
+  animation-delay: -9s;
+}
+
+.beam {
+  top: -28%;
+  width: 18%;
+  height: 130%;
+  transform: skewX(-17deg);
+  transform-origin: top center;
+  opacity: .18;
+  background: linear-gradient(90deg, transparent, rgba(var(--second-light), .12) 43%, rgba(var(--second-light), .22) 50%, rgba(var(--second-light), .1) 57%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 24%, #000 64%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 24%, #000 64%, transparent 100%);
+  animation: beamDrift 24s ease-in-out infinite alternate;
+}
+
+.beamOne {
+  left: 31%;
+}
+
+.beamTwo {
+  left: 73%;
+  width: 10%;
+  opacity: .13;
+  animation-duration: 31s;
+  animation-delay: -15s;
+}
+
+.veil {
+  inset: 15% -28% -45%;
+  opacity: .19;
+  background: url('/assets/realm-clouds.webp') center / 100% 100% no-repeat;
+  mix-blend-mode: screen;
+  transform: translateX(-3%);
+  animation: veilDrift 27s ease-in-out infinite alternate;
+}
+
+.mote {
+  border-radius: 50%;
+  background: rgba(var(--second-light), .95);
+  box-shadow: 0 0 6px 1px rgba(var(--second-light), .4);
+  opacity: .28;
+  animation: moteFloat 15s ease-in-out infinite;
+}
+
+.forge .mote {
+  box-shadow: 0 0 7px 1px rgba(var(--light), .45);
+}
+
+.well .glowOne {
+  top: 27%;
+}
+
+.archive .beamOne {
+  left: 52%;
+}
+
+@keyframes glowBreath {
+  from { opacity: .22; transform: translate3d(-4%, 0, 0) scale(.98); }
+  to { opacity: .52; transform: translate3d(6%, -5%, 0) scale(1.09); }
+}
+
+@keyframes beamDrift {
+  from { opacity: .1; transform: translate3d(-8%, 0, 0) skewX(-17deg); }
+  to { opacity: .24; transform: translate3d(11%, 0, 0) skewX(-17deg); }
+}
+
+@keyframes veilDrift {
+  from { opacity: .1; transform: translate3d(-9%, 3%, 0); }
+  to { opacity: .23; transform: translate3d(12%, -7%, 0); }
+}
+
+@keyframes moteFloat {
+  0% { opacity: 0; transform: translate3d(0, 18px, 0); }
+  35% { opacity: .72; transform: translate3d(7px, 0, 0); }
+  75% { opacity: .38; transform: translate3d(-4px, -22px, 0); }
+  100% { opacity: 0; transform: translate3d(3px, -35px, 0); }
+}
+
+/* The hero already has its own authored cloud layers. */
+.hero .veil { background:linear-gradient(95deg,transparent,rgba(var(--light),.12),transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .scene > span { animation: none !important; }
+}
+
+:global(.motion-off) .scene > span,
+:global(.motion-off).scene > span {
+  animation: none !important;
+}

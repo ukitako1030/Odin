@@ -1,0 +1,44 @@
+{
+  "name": "odin",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "setup:drive": "tsx scripts/setup-drive.ts",
+    "migrate:drive": "tsx scripts/migrate-drive.ts",
+    "mcp": "tsx scripts/odin-mcp.ts",
+    "import:ai": "tsx scripts/odin-import-ai.ts",
+    "memory": "node scripts/odin-memory.mts",
+    "check:remote": "node scripts/check-remote.mts",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.1",
+    "fflate": "^0.8.3",
+    "gray-matter": "^4.0.3",
+    "jose": "^6.0.0",
+    "lucide-react": "^0.468.0",
+    "next": "^16.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "sharp": "^0.35.4",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}
