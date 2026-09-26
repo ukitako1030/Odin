@@ -71,7 +71,9 @@ Odinは自分で起動・運用するアプリです。会話から保存する�
 | --- | --- | --- |
 | **1. Driveを接続** | Google CloudでDrive API・OAuthを設定し、`npm run setup:drive` を実行 | [Driveの設定・既存記録の移行](docs/SETUP.md#google-driveを保存先にする) |
 | **2. 必要ならホスト** | 外出先のスマホやChatGPTから使うため、HTTPSでアクセスできる場所へ配置 | [Vercel・認証・共有ロックの設定](docs/SETUP.md#インターネット上で使う場合) |
-| **3. AIに登録** | ChatGPTのプラグイン、またはCodexなどのMCP接続としてOdinを登録 | [ChatGPT・Codexの設定と保存確認](docs/AI-CONNECTIONS.md) |
+| **3. AIに登録** | ChatGPTのプラグイン、またはCodexなどのMCP接続としてOdinを登録 | [プラグインの生成・導入](docs/PLUGIN-SETUP.md) |
+
+配布用テンプレートを同梱しています。`npm run setup:plugin` で、自分用の接続設定を含むプラグインとZIPを生成できます。[導入手順はこちら](docs/PLUGIN-SETUP.md)。
 
 ChatGPTのGoogle Drive連携とは別に、**Odin自身への接続**が必要です。ChatGPT用のOAuth設定、Codexの設定例、接続できないときの確認項目は上記ガイドにまとめています。
 

@@ -2,6 +2,8 @@
 
 OdinのWeb画面、REST API、MCPは同じ記録を扱います。AIによる分類・要約は接続したAI側が担当します。公開版をDriveの正本へ保存するときは、最初に `odin_status` で `provider=drive`、`connected=true`、`writable=true` を確認してください。ローカル開発では `provider=local` の保存も可能ですが、公開版のAI連携でDrive保存の代わりにはしません。
 
+**配布用プラグインを使う場合：** まず下記で自分の接続を登録し、[プラグイン導入ガイド](PLUGIN-SETUP.md)で接続用ファイルを生成してください。プラグインを一から作る必要はありません。
+
 ## ChatGPTから使う（公開HTTPSのOdin）
 
 ChatGPTのMCP接続には、公開HTTPSのOdinとOAuthの認証サーバーが必要です。`ODIN_API_TOKEN` をChatGPTへ貼る設定ではありません。OdinはOAuthの**リソースサーバー**としてアクセストークンを検証します。ログイン画面、トークン発行、OAuthクライアント登録は提供しないため、Auth0などを別に用意します。Webログイン用の `ODIN_OWNER_PASSWORD` とOAuthログインは別物です。公開配置の全体手順は [SETUP.md](SETUP.md) を参照してください。

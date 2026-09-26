@@ -1,0 +1,17 @@
+{
+  "name": "odin-memory",
+  "version": "0.1.0",
+  "description": "自分のOdinへ会話の知識・タスク・アイデアを保存し、検索するプラグイン。",
+  "author": { "name": "Odin project" },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Odin Memory",
+    "shortDescription": "会話で得た知識とやることを、自分のOdinへ。",
+    "longDescription": "接続した自分のOdinで記録を検索・保存します。保存先の確認、重複の照合、保存後の読み戻しを行います。利用前に自分のOdinと認証の設定が必要です。",
+    "developerName": "Odin project",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "brandColor": "#7055C8",
+    "defaultPrompt": ["今の話をOdinに保存して", "Odinで関連する記録を探して", "Odinの未完了タスクを確認して"]
+  }
+}

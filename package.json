@@ -12,6 +12,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "setup:drive": "tsx scripts/setup-drive.ts",
+    "setup:plugin": "node scripts/setup-plugin.mjs",
     "migrate:drive": "tsx scripts/migrate-drive.ts",
     "mcp": "tsx scripts/odin-mcp.ts",
     "import:ai": "tsx scripts/odin-import-ai.ts",
