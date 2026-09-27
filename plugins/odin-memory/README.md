@@ -13,4 +13,4 @@ npm run setup:plugin
 
 [接続登録・生成・インストールの手順](../../docs/PLUGIN-SETUP.md)
 
-再利用許諾の状況は、リポジトリの[公開状況](../../docs/RELEASE-STATUS.md)を確認してください。
+このテンプレートは[MIT License](../../LICENSE)で利用できます。依存物や第三者の権利は別条件です。詳細は[公開状況](../../docs/RELEASE-STATUS.md)を確認してください。

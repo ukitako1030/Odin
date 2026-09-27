@@ -2,10 +2,10 @@
 
 # Release status
 
-The source in this repository is public. **No reuse license has been granted for the code or images.**
+The source in this repository is public. **Code, documentation, plugins, and included assets to which the author holds the rights are available under the [MIT License](../LICENSE).**
 
 - The export includes an explicit list of application files, documentation, and selected assets. Personal records, actual environment credentials, and internal operations notes are excluded.
-- Code and image reuse terms have not been set. Public access to the source does not grant permission to reuse it. Earlier commits contain superseded artwork; asset review is ongoing and Git history is retained. See [the asset review (Japanese)](ASSET-REVIEW.md).
+- The MIT License permits commercial use, modification, and redistribution while requiring preservation of its copyright and permission notices. Dependencies and third-party rights remain subject to their own terms. Earlier commits contain superseded artwork; asset review is ongoing and Git history is retained. See [the asset review (Japanese)](ASSET-REVIEW.md).
 - Configure Google Drive, your AI client, and hosting with your own accounts and credentials. The author's connections are not shared with this package.
 - The interface supports Japanese and English. User-created content is not automatically translated. Choose English in Settings or on the login screen; the default is Japanese.
 - The README, setup guide, AI connection guide, plugin guide, and workflow illustration have English versions. The English README now uses English interface screenshots and fictional English records.

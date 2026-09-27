@@ -87,9 +87,15 @@ You must connect **Odin itself**, separately from ChatGPT's Google Drive integra
 ## Before you start
 
 - Odin has no built-in AI API calls for classification or summarization. Costs depend on your AI plan, Drive storage, hosting, and supporting services.
-- It is for personal use. Collaboration, scheduled notifications, and automatic synchronization of all AI conversation history are not included.
+- It is designed for a single owner. Collaboration, scheduled notifications, and automatic synchronization of all AI conversation history are not included.
 - Once connected, Drive becomes the storage location. It does not automatically sync both ways with your local records.
 
----
+## Make it yours — and let me know how it goes
 
-The source is public. No reuse license has been granted for the code or images. [Release status](docs/RELEASE-STATUS.en.md) · [Image provenance (Japanese)](docs/ASSETS.md)
+Odin is available under the [MIT License](LICENSE). You are free to use it personally or commercially, modify it, and redistribute it. Keep the copyright and license notices.
+
+Found a bug? Tried it out? Made something better? Share your experience through GitHub Issues or a Pull Request — it would make the creator’s day. **Feedback is optional. You are welcome to simply use and enjoy it.**
+
+This covers the code, documentation, plugin, and bundled images to the extent the author holds the rights. Dependencies and third-party rights remain subject to their own terms.
+
+[Release status](docs/RELEASE-STATUS.en.md) · [Image provenance (Japanese)](docs/ASSETS.md)

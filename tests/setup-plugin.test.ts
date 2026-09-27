@@ -23,6 +23,7 @@ async function fixture(t: TestContext) {
     author: { name: 'Odin' }, interface: { displayName: 'Odin Memory' },
   }));
   await writeFile(path.join(templateRoot, 'skills', 'odin-memory', 'SKILL.en.md'), '# Odin memory in English\n');
+  await writeFile(path.join(templateRoot, 'LICENSE'), 'MIT License\n\nCopyright (c) 2026 Odin\n');
   return { root, templateRoot };
 }
 
@@ -51,12 +52,15 @@ test('MCP package uses a canonical endpoint and ZIP contains only the plugin fil
   assert.equal(portableMcp.mcpServers.odin.url, result.endpoint);
   const archive = unzipSync(new Uint8Array(await readFile(path.join(output, 'odin-memory.zip'))));
   const paths = Object.keys(archive).sort();
-  assert.deepEqual(paths, ['.codex-plugin/plugin.json', '.mcp.json', 'mcp.json', 'plugin.json', 'skills/odin-memory/SKILL.md'].sort());
+  assert.deepEqual(paths, ['.codex-plugin/plugin.json', '.mcp.json', 'LICENSE', 'mcp.json', 'plugin.json', 'skills/odin-memory/SKILL.md'].sort());
   for (const relative of paths) assert.equal(strFromU8(archive[relative]), await readFile(path.join(plugin, relative), 'utf8'));
+  assert.equal(await readFile(path.join(plugin, 'LICENSE'), 'utf8'), await readFile(path.join(templateRoot, 'LICENSE'), 'utf8'));
   const marketplace = await parse(path.join(output, '.agents', 'plugins', 'marketplace.json'));
   assert.equal(marketplace.name, 'odin-local');
   assert.equal(marketplace.plugins[0].source.path, './plugins/odin-memory');
-  assert.match(await readFile(path.join(output, 'README.md'), 'utf8'), /ChatGPT.*OAuth/);
+  const guide = await readFile(path.join(output, 'README.md'), 'utf8');
+  assert.match(guide, /ChatGPT.*OAuth/);
+  assert.match(guide, /\(plugins\/odin-memory\/LICENSE\)/);
   assert.equal((await readdir(plugin)).includes('.env.local'), false);
 });
 
@@ -72,6 +76,7 @@ test('registered App package preserves its ID and does not duplicate MCP configu
   assert.deepEqual(await parse(path.join(plugin, '.app.json')), { apps: { odin: { id: 'plugin_asdk_app_AbC_123' } } });
   const names = Object.keys(unzipSync(new Uint8Array(await readFile(path.join(result.output, 'odin-memory.zip')))));
   assert.ok(names.includes('.app.json'));
+  assert.ok(names.includes('LICENSE'));
   assert.ok(!names.includes('.mcp.json') && !names.includes('mcp.json'));
 });
 
@@ -86,9 +91,12 @@ test('English MCP package selects only English templates and keeps standard outp
   assert.equal(legacy.mcpServers, './.mcp.json');
   assert.equal((await readFile(path.join(result.pluginRoot, 'skills', 'odin-memory', 'SKILL.md'), 'utf8')).trim(), '# Odin memory in English');
   const archive = unzipSync(new Uint8Array(await readFile(path.join(result.output, 'odin-memory.zip'))));
-  assert.deepEqual(Object.keys(archive).sort(), ['.codex-plugin/plugin.json', '.mcp.json', 'mcp.json', 'plugin.json', 'skills/odin-memory/SKILL.md'].sort());
+  assert.deepEqual(Object.keys(archive).sort(), ['.codex-plugin/plugin.json', '.mcp.json', 'LICENSE', 'mcp.json', 'plugin.json', 'skills/odin-memory/SKILL.md'].sort());
+  assert.equal(strFromU8(archive.LICENSE), await readFile(path.join(templateRoot, 'LICENSE'), 'utf8'));
   assert.ok(!Object.values(archive).some((contents) => strFromU8(contents).includes('private-secret')));
-  assert.match(await readFile(path.join(result.output, 'README.md'), 'utf8'), /Endpoint:.*https:\/\/odin\.example\/api\/mcp/);
+  const guide = await readFile(path.join(result.output, 'README.md'), 'utf8');
+  assert.match(guide, /Endpoint:.*https:\/\/odin\.example\/api\/mcp/);
+  assert.match(guide, /\(plugins\/odin-memory\/LICENSE\)/);
 });
 
 test('English App package keeps App mode and English diagnostics', async (t) => {
@@ -152,11 +160,27 @@ test('concurrent generation claims the output once and leaves a complete archive
   assert.equal(outcomes.filter((outcome) => outcome.status === 'rejected').length, 1);
   const archive = unzipSync(new Uint8Array(await readFile(path.join(options.output, 'odin-memory.zip'))));
   assert.ok(archive['.codex-plugin/plugin.json']);
+  assert.ok(archive.LICENSE);
   assert.ok(archive['plugin.json']);
   assert.ok(archive['skills/odin-memory/SKILL.md']);
   for (const [relative, data] of Object.entries(archive)) {
     assert.equal(strFromU8(data), await readFile(path.join(options.output, 'plugins', 'odin-memory', relative), 'utf8'));
   }
+});
+
+test('missing or linked LICENSE fails before creating output', async (t) => {
+  const { root, templateRoot } = await fixture(t);
+  const license = path.join(templateRoot, 'LICENSE');
+  await rm(license);
+  const missingOutput = path.join(root, 'missing-license');
+  await assert.rejects(generatePlugin({ url: 'https://odin.example', output: missingOutput, templateRoot, language: 'en' }), /LICENSE/);
+  await assert.rejects(lstat(missingOutput), { code: 'ENOENT' });
+  const outside = path.join(root, 'outside-license');
+  await writeFile(outside, 'private');
+  await symlink(outside, license, 'file');
+  const linkedOutput = path.join(root, 'linked-license');
+  await assert.rejects(generatePlugin({ url: 'https://odin.example', output: linkedOutput, templateRoot }), /シンボリックリンク|ジャンクション/);
+  await assert.rejects(lstat(linkedOutput), { code: 'ENOENT' });
 });
 
 test('README quotes shell metacharacters in the output path', async (t) => {

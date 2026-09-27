@@ -7,10 +7,10 @@ import { zipSync, strToU8 } from 'fflate';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const templateFiles = {
-  ja: ['.codex-plugin/plugin.json', 'skills/odin-memory/SKILL.md'],
-  en: ['.codex-plugin/plugin.en.json', 'skills/odin-memory/SKILL.en.md'],
+  ja: ['.codex-plugin/plugin.json', 'skills/odin-memory/SKILL.md', 'LICENSE'],
+  en: ['.codex-plugin/plugin.en.json', 'skills/odin-memory/SKILL.en.md', 'LICENSE'],
 };
-const outputTemplateFiles = ['.codex-plugin/plugin.json', 'skills/odin-memory/SKILL.md'];
+const outputTemplateFiles = ['.codex-plugin/plugin.json', 'skills/odin-memory/SKILL.md', 'LICENSE'];
 const json = (value) => `${JSON.stringify(value, null, 2)}\n`;
 const messages = {
   ja: {
@@ -118,12 +118,12 @@ function readme(endpoint, appId, output, language) {
     const mode = appId
       ? `Registered App ID: \`${appId}\`. Confirm that it points to your own Odin app.`
       : 'No App ID was provided. Each user must authorize the MCP OAuth connection.';
-    return `# Odin Memory plugin\n\nEndpoint: \`${endpoint}\`\n\n${mode}\n\nGeneration only creates configuration files. It does not install or connect the plugin, grant OAuth authorization, publish anything, or contact your server. Supplying a URL does not complete ChatGPT registration or OAuth setup. After installation, verify the endpoint and registered ID, then complete the required OAuth authorization.\n\nTo add the local marketplace to Codex:\n\n\`\`\`sh\ncodex plugin marketplace add ${quoteShellPath(output)}\n\`\`\`\n\n\`odin-memory.zip\` contains only the plugin files.\n`;
+    return `# Odin Memory plugin\n\nEndpoint: \`${endpoint}\`\n\n${mode}\n\nGeneration only creates configuration files. It does not install or connect the plugin, grant OAuth authorization, publish anything, or contact your server. Supplying a URL does not complete ChatGPT registration or OAuth setup. After installation, verify the endpoint and registered ID, then complete the required OAuth authorization.\n\nTo add the local marketplace to Codex:\n\n\`\`\`sh\ncodex plugin marketplace add ${quoteShellPath(output)}\n\`\`\`\n\n\`odin-memory.zip\` contains only the plugin files, including the [MIT license](plugins/odin-memory/LICENSE).\n`;
   }
   const mode = appId
     ? `登録済み App ID: \`${appId}\`。この ID が自分の Odin アプリを指していることを確認してください。`
     : 'App ID は未指定です。MCP の OAuth 接続時に利用者ごとの認可が必要です。';
-  return `# Odin Memory プラグイン\n\n接続先: \`${endpoint}\`\n\n${mode}\n\n生成コマンドは設定ファイルを作るだけです。プラグインの自動接続、OAuth 認可、外部公開、サーバーへの通信は行いません。URL を指定しただけでは ChatGPT への登録と OAuth 設定は完了しません。導入後、接続先 URL と登録 ID を確認し、必要な OAuth 認可を行ってください。\n\nCodex にローカル marketplace を登録する場合:\n\n\`\`\`sh\ncodex plugin marketplace add ${quoteShellPath(output)}\n\`\`\`\n\n\`odin-memory.zip\` にはプラグイン本体だけを収録しています。\n`;
+  return `# Odin Memory プラグイン\n\n接続先: \`${endpoint}\`\n\n${mode}\n\n生成コマンドは設定ファイルを作るだけです。プラグインの自動接続、OAuth 認可、外部公開、サーバーへの通信は行いません。URL を指定しただけでは ChatGPT への登録と OAuth 設定は完了しません。導入後、接続先 URL と登録 ID を確認し、必要な OAuth 認可を行ってください。\n\nCodex にローカル marketplace を登録する場合:\n\n\`\`\`sh\ncodex plugin marketplace add ${quoteShellPath(output)}\n\`\`\`\n\n\`odin-memory.zip\` には[MITライセンス](plugins/odin-memory/LICENSE)を含むプラグイン本体だけを収録しています。\n`;
 }
 
 /** Generate a private, reviewable plugin package without connecting to Odin or changing Codex settings. */
@@ -144,6 +144,7 @@ export async function generatePlugin({ url, appId, output, templateRoot, languag
 
   const pluginFiles = new Map();
   pluginFiles.set('skills/odin-memory/SKILL.md', contents.get('skills/odin-memory/SKILL.md'));
+  pluginFiles.set('LICENSE', contents.get('LICENSE'));
   if (registeredAppId) {
     pluginManifest.apps = './.app.json';
     pluginFiles.set('.app.json', json({ apps: { odin: { id: registeredAppId } } }));

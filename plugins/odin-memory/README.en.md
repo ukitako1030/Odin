@@ -11,4 +11,4 @@ npm run setup:plugin -- --language en
 
 [Connection, generation, and installation guide](../../docs/PLUGIN-SETUP.en.md)
 
-For reuse permissions, see the repository's [release status](../../docs/RELEASE-STATUS.en.md).
+This template is available under the [MIT License](../../LICENSE). Dependencies and third-party rights have their own terms. See [release status](../../docs/RELEASE-STATUS.en.md).
