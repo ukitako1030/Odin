@@ -4,8 +4,10 @@ import { FormEvent, useEffect, useState } from 'react';
 import styles from './login.module.css';
 import BrandWordmark from '@/components/BrandWordmark';
 import RealmScene from '@/components/RealmScene';
+import { LanguageSwitch, useI18n } from '@/components/I18nProvider';
 
 export default function LoginPage() {
+  const { t } = useI18n();
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -24,17 +26,18 @@ export default function LoginPage() {
   return <main className={styles.screen}>
     <RealmScene kind="archive" enabled={motion} sizes="(min-aspect-ratio: 3/1) 100vw, 300vh"/>
     <section className={styles.card} aria-labelledby="login-title">
+      <LanguageSwitch/>
       <div className={styles.wordmark}><BrandWordmark enabled={motion}/></div>
       <p className={styles.eyebrow}>YOUR PRIVATE SPACE</p>
-      <h1 id="login-title">Odinへようこそ</h1>
-      <p className={styles.description}>あなたの記憶と、これからのための場所。</p>
+      <h1 id="login-title">{t('Odinへようこそ')}</h1>
+      <p className={styles.description}>{t('あなたの記憶と、これからのための場所。')}</p>
       <form onSubmit={submit}>
-        <label htmlFor="password">パスワード</label>
+        <label htmlFor="password">{t('パスワード')}</label>
         <input id="password" name="password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required autoFocus />
-        {error && <p className={styles.error} role="alert">{error}</p>}
-        <button disabled={busy} type="submit">{busy ? '確認しています…' : 'ログインする'}<span aria-hidden="true">→</span></button>
+        {error && <p className={styles.error} role="alert">{t(error)}</p>}
+        <button disabled={busy} type="submit">{busy ? t('確認しています…') : t('ログインする')}<span aria-hidden="true">→</span></button>
       </form>
-      <p className={styles.footnote}>あなただけの知識とタスクを、安全に。</p>
+      <p className={styles.footnote}>{t('あなただけの知識とタスクを、安全に。')}</p>
     </section>
   </main>;
 }

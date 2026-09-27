@@ -6,27 +6,70 @@ import { stdin, stdout, stderr } from 'node:process';
 import { zipSync, strToU8 } from 'fflate';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const allowedTemplateFiles = ['.codex-plugin/plugin.json', 'skills/odin-memory/SKILL.md'];
+const templateFiles = {
+  ja: ['.codex-plugin/plugin.json', 'skills/odin-memory/SKILL.md'],
+  en: ['.codex-plugin/plugin.en.json', 'skills/odin-memory/SKILL.en.md'],
+};
+const outputTemplateFiles = ['.codex-plugin/plugin.json', 'skills/odin-memory/SKILL.md'];
 const json = (value) => `${JSON.stringify(value, null, 2)}\n`;
+const messages = {
+  ja: {
+    missingUrl: 'HTTPS の Odin URL を指定してください。', invalidUrl: 'Odin URL の形式が正しくありません。',
+    publicUrl: 'HTTPS の公開 origin または /api/mcp の URL を指定してください。',
+    appId: 'App ID は asdk_app_ または plugin_asdk_app_ で始まる有効な ID を指定してください。',
+    symlink: '出力先にシンボリックリンクまたはジャンクションを含められません。',
+    missingTemplate: (file) => `テンプレートの必須ファイルがありません: ${file}`,
+    invalidManifest: 'テンプレートの plugin.json が不正です。',
+    invalidName: 'テンプレートの plugin.json は name が odin-memory である必要があります。',
+    existing: '出力先は既に存在します。新しいディレクトリを指定してください。',
+    args: '引数が正しくありません。--help で使い方を確認してください。',
+    tty: '対話入力には TTY が必要です。', urlPrompt: 'Odin の HTTPS URL: ',
+    appPrompt: '登録済み App ID（任意、Enter で省略）: ',
+    success: (output) => `プラグインを生成しました: ${output}\nREADME.md で接続先と導入手順を確認してください。\n`,
+    help: '使い方: npm run setup:plugin -- [--language ja|en] --url https://your-odin.example [--app-id asdk_app_...|plugin_asdk_app_...] [--output DIRECTORY]\nURL を省略すると対話形式で入力します。\n',
+  },
+  en: {
+    missingUrl: 'Provide an HTTPS Odin URL.', invalidUrl: 'The Odin URL is invalid.',
+    publicUrl: 'Provide a public HTTPS origin or /api/mcp URL.',
+    appId: 'Provide a valid App ID beginning with asdk_app_ or plugin_asdk_app_.',
+    symlink: 'The output path must not contain a symbolic link or junction.',
+    missingTemplate: (file) => `Required template file is missing: ${file}`,
+    invalidManifest: 'The template plugin.json is invalid.',
+    invalidName: 'The template plugin.json must have name odin-memory.',
+    existing: 'The output path already exists. Choose a new directory.',
+    args: 'Invalid arguments. Use --help for usage.',
+    tty: 'Interactive input requires a TTY.', urlPrompt: 'Odin HTTPS URL: ',
+    appPrompt: 'Registered App ID (optional; press Enter to skip): ',
+    success: (output) => `Plugin generated: ${output}\nReview README.md for the endpoint and installation steps.\n`,
+    help: 'Usage: npm run setup:plugin -- [--language ja|en] --url https://your-odin.example [--app-id asdk_app_...|plugin_asdk_app_...] [--output DIRECTORY]\nOmit the URL for interactive input.\n',
+  },
+};
 
-function endpointFrom(input) {
-  if (typeof input !== 'string' || !input.trim()) throw new Error('HTTPS の Odin URL を指定してください。');
+function validLanguage(language) {
+  if (language === undefined) return 'ja';
+  if (language !== 'ja' && language !== 'en') throw new Error('Language must be ja or en. / 言語は ja または en を指定してください。');
+  return language;
+}
+
+function endpointFrom(input, language) {
+  const message = messages[language];
+  if (typeof input !== 'string' || !input.trim()) throw new Error(message.missingUrl);
   let parsed;
-  try { parsed = new URL(input); } catch { throw new Error('Odin URL の形式が正しくありません。'); }
+  try { parsed = new URL(input); } catch { throw new Error(message.invalidUrl); }
   const hostname = parsed.hostname.toLowerCase();
   if (parsed.protocol !== 'https:' || parsed.username || parsed.password || parsed.search || parsed.hash ||
       (parsed.pathname !== '/' && parsed.pathname !== '/api/mcp') ||
       hostname === 'localhost' || hostname.endsWith('.localhost') || hostname === '127.0.0.1' ||
       hostname === '[::1]' || hostname === '::1' || !hostname.includes('.')) {
-    throw new Error('HTTPS の公開 origin または /api/mcp の URL を指定してください。');
+    throw new Error(message.publicUrl);
   }
   return `${parsed.origin}/api/mcp`;
 }
 
-function validAppId(input) {
+function validAppId(input, language) {
   if (input === undefined || input === null || input === '') return undefined;
   if (typeof input !== 'string' || !/^(?:plugin_)?asdk_app_[A-Za-z0-9_-]+$/.test(input)) {
-    throw new Error('App ID は asdk_app_ または plugin_asdk_app_ で始まる有効な ID を指定してください。');
+    throw new Error(messages[language].appId);
   }
   return input;
 }
@@ -36,31 +79,31 @@ async function exists(target) {
   catch (error) { if (error.code === 'ENOENT') return null; throw error; }
 }
 
-async function rejectSymlinkAncestors(target) {
+async function rejectSymlinkAncestors(target, language) {
   let current = path.resolve(target);
   while (true) {
     const stat = await exists(current);
-    if (stat?.isSymbolicLink()) throw new Error('出力先にシンボリックリンクまたはジャンクションを含められません。');
+    if (stat?.isSymbolicLink()) throw new Error(messages[language].symlink);
     const parent = path.dirname(current);
     if (parent === current) break;
     current = parent;
   }
 }
 
-async function readTemplate(templateRoot) {
+async function readTemplate(templateRoot, language) {
   const contents = new Map();
-  for (const relative of allowedTemplateFiles) {
+  for (const [index, relative] of templateFiles[language].entries()) {
     const target = path.join(templateRoot, ...relative.split('/'));
-    await rejectSymlinkAncestors(target);
+    await rejectSymlinkAncestors(target, language);
     const stat = await exists(target);
-    if (!stat?.isFile()) throw new Error(`テンプレートの必須ファイルがありません: ${relative}`);
-    contents.set(relative, await readFile(target, 'utf8'));
+    if (!stat?.isFile()) throw new Error(messages[language].missingTemplate(relative));
+    contents.set(outputTemplateFiles[index], await readFile(target, 'utf8'));
   }
   let manifest;
-  try { manifest = JSON.parse(contents.get(allowedTemplateFiles[0])); }
-  catch { throw new Error('テンプレートの plugin.json が不正です。'); }
+  try { manifest = JSON.parse(contents.get(outputTemplateFiles[0])); }
+  catch { throw new Error(messages[language].invalidManifest); }
   if (!manifest || manifest.name !== 'odin-memory' || Array.isArray(manifest) || typeof manifest !== 'object') {
-    throw new Error('テンプレートの plugin.json は name が odin-memory である必要があります。');
+    throw new Error(messages[language].invalidName);
   }
   return { manifest, contents };
 }
@@ -70,7 +113,13 @@ function quoteShellPath(target) {
   return `'${target.replaceAll("'", "'\\''")}'`;
 }
 
-function readme(endpoint, appId, output) {
+function readme(endpoint, appId, output, language) {
+  if (language === 'en') {
+    const mode = appId
+      ? `Registered App ID: \`${appId}\`. Confirm that it points to your own Odin app.`
+      : 'No App ID was provided. Each user must authorize the MCP OAuth connection.';
+    return `# Odin Memory plugin\n\nEndpoint: \`${endpoint}\`\n\n${mode}\n\nGeneration only creates configuration files. It does not install or connect the plugin, grant OAuth authorization, publish anything, or contact your server. Supplying a URL does not complete ChatGPT registration or OAuth setup. After installation, verify the endpoint and registered ID, then complete the required OAuth authorization.\n\nTo add the local marketplace to Codex:\n\n\`\`\`sh\ncodex plugin marketplace add ${quoteShellPath(output)}\n\`\`\`\n\n\`odin-memory.zip\` contains only the plugin files.\n`;
+  }
   const mode = appId
     ? `登録済み App ID: \`${appId}\`。この ID が自分の Odin アプリを指していることを確認してください。`
     : 'App ID は未指定です。MCP の OAuth 接続時に利用者ごとの認可が必要です。';
@@ -78,16 +127,17 @@ function readme(endpoint, appId, output) {
 }
 
 /** Generate a private, reviewable plugin package without connecting to Odin or changing Codex settings. */
-export async function generatePlugin({ url, appId, output, templateRoot } = {}) {
-  const endpoint = endpointFrom(url);
-  const registeredAppId = validAppId(appId);
+export async function generatePlugin({ url, appId, output, templateRoot, language } = {}) {
+  language = validLanguage(language);
+  const endpoint = endpointFrom(url, language);
+  const registeredAppId = validAppId(appId, language);
   const destination = path.resolve(output ?? path.join(repoRoot, '.odin', 'plugin-package'));
-  if (await exists(destination)) throw new Error('出力先は既に存在します。新しいディレクトリを指定してください。');
-  await rejectSymlinkAncestors(destination);
+  if (await exists(destination)) throw new Error(messages[language].existing);
+  await rejectSymlinkAncestors(destination, language);
 
   let source = templateRoot ? path.resolve(templateRoot) : path.join(repoRoot, 'plugins', 'odin-memory');
   if (!templateRoot && !(await exists(source))) source = path.join(repoRoot, 'release', 'public-template', 'plugins', 'odin-memory');
-  const { manifest, contents } = await readTemplate(source);
+  const { manifest, contents } = await readTemplate(source, language);
   const pluginManifest = { ...manifest, name: 'odin-memory', skills: './skills/' };
   delete pluginManifest.apps;
   delete pluginManifest.mcpServers;
@@ -132,7 +182,7 @@ export async function generatePlugin({ url, appId, output, templateRoot } = {}) 
   };
   await mkdir(path.join(destination, '.agents', 'plugins'), { recursive: true });
   await writeFile(path.join(destination, '.agents', 'plugins', 'marketplace.json'), json(marketplace), { flag: 'wx' });
-  await writeFile(path.join(destination, 'README.md'), readme(endpoint, registeredAppId, destination), { flag: 'wx' });
+  await writeFile(path.join(destination, 'README.md'), readme(endpoint, registeredAppId, destination, language), { flag: 'wx' });
   const zipEntries = Object.fromEntries([...pluginFiles].map(([relative, content]) => [relative, strToU8(content)]));
   await writeFile(path.join(destination, 'odin-memory.zip'), zipSync(zipEntries, { level: 9 }), { flag: 'wx' });
   return { output: destination, endpoint, appId: registeredAppId, pluginRoot };
@@ -140,30 +190,34 @@ export async function generatePlugin({ url, appId, output, templateRoot } = {}) 
 
 function parseArgs(args) {
   const options = {};
+  const requestedLanguage = args.indexOf('--language');
+  if (requestedLanguage !== -1) options.language = validLanguage(args[requestedLanguage + 1]);
+  const message = messages[options.language ?? 'ja'];
   for (let i = 0; i < args.length; i++) {
     const token = args[i];
-    if (token === '--help' || token === '-h') return { help: true };
-    const key = { '--url': 'url', '--app-id': 'appId', '--output': 'output' }[token];
-    if (!key || options[key] !== undefined || !args[i + 1] || args[i + 1].startsWith('--')) throw new Error('引数が正しくありません。--help で使い方を確認してください。');
+    if (token === '--help' || token === '-h') return { help: true, language: options.language ?? 'ja' };
+    const key = { '--url': 'url', '--app-id': 'appId', '--output': 'output', '--language': 'language' }[token];
+    if (!key || (key !== 'language' && options[key] !== undefined) || (key === 'language' && i !== requestedLanguage) || !args[i + 1] || args[i + 1].startsWith('--')) throw new Error(message.args);
     options[key] = args[++i];
   }
   return options;
 }
 
-const help = '使い方: npm run setup:plugin -- --url https://your-odin.example [--app-id asdk_app_...|plugin_asdk_app_...] [--output DIRECTORY]\n引数なしでは対話形式で入力します。\n';
 async function main() {
   const options = parseArgs(process.argv.slice(2));
-  if (options.help) { stdout.write(help); return; }
-  if (Object.keys(options).length === 0) {
-    if (!stdin.isTTY || !stdout.isTTY) throw new Error(`対話入力には TTY が必要です。\n${help}`);
+  const language = validLanguage(options.language);
+  const message = messages[language];
+  if (options.help) { stdout.write(message.help); return; }
+  if (!options.url) {
+    if (!stdin.isTTY || !stdout.isTTY) throw new Error(`${message.tty}\n${message.help}`);
     const prompt = createInterface({ input: stdin, output: stdout });
     try {
-      options.url = await prompt.question('Odin の HTTPS URL: ');
-      options.appId = (await prompt.question('登録済み App ID（任意、Enter で省略）: ')).trim() || undefined;
+      options.url = await prompt.question(message.urlPrompt);
+      if (options.appId === undefined) options.appId = (await prompt.question(message.appPrompt)).trim() || undefined;
     } finally { prompt.close(); }
   }
   const result = await generatePlugin(options);
-  stdout.write(`プラグインを生成しました: ${result.output}\nREADME.md で接続先と導入手順を確認してください。\n`);
+  stdout.write(message.success(result.output));
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

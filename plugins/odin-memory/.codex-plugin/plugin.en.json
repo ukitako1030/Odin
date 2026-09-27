@@ -1,0 +1,17 @@
+{
+  "name": "odin-memory",
+  "version": "0.1.0",
+  "description": "Search your Odin records and save knowledge, tasks, and ideas from conversations.",
+  "author": { "name": "Odin project" },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Odin Memory",
+    "shortDescription": "Keep what you learn and need to do in your own Odin.",
+    "longDescription": "Search and save records in your connected Odin. Check the destination, look for duplicates, and read saved records back. Set up your Odin connection and authentication before use.",
+    "developerName": "Odin project",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "brandColor": "#7055C8",
+    "defaultPrompt": ["Save this conversation to Odin", "Find related records in Odin", "Show my open tasks in Odin"]
+  }
+}

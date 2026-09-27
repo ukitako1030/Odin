@@ -1,3 +1,5 @@
+**日本語** | [English](AI-CONNECTIONS.en.md)
+
 # 外部AIからOdinを使う
 
 OdinのWeb画面、REST API、MCPは同じ記録を扱います。AIによる分類・要約は接続したAI側が担当します。公開版をDriveの正本へ保存するときは、最初に `odin_status` で `provider=drive`、`connected=true`、`writable=true` を確認してください。ローカル開発では `provider=local` の保存も可能ですが、公開版のAI連携でDrive保存の代わりにはしません。

@@ -1,13 +1,18 @@
 import type { Metadata, Viewport } from 'next';
+import { cookies } from 'next/headers';
+import { I18nProvider } from '@/components/I18nProvider';
+import { localeCookie, normalizeLocale } from '@/lib/i18n';
 import './globals.css';
 
-export const metadata: Metadata = {
-  title: 'ODIN — 思考の聖域',
-  description: '知識、計画、ひらめきをひとつの静かな場所に。',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = normalizeLocale((await cookies()).get(localeCookie)?.value);
+  return { title: locale === 'en' ? 'ODIN — Sanctuary of Thought' : 'ODIN — 思考の聖域',
+    description: locale === 'en' ? 'A quiet home for your knowledge, plans, and inspiration.' : '知識、計画、ひらめきをひとつの静かな場所に。' };
+}
 
 export const viewport: Viewport = { viewportFit: 'cover' };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ja" data-scroll-behavior="smooth"><body>{children}</body></html>;
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const locale = normalizeLocale((await cookies()).get(localeCookie)?.value);
+  return <html lang={locale} data-scroll-behavior="smooth"><body><I18nProvider initialLocale={locale}>{children}</I18nProvider></body></html>;
 }

@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { inspectChecklistLine, toggleChecklistLine } from '@/lib/checklist';
+import { useI18n } from '@/components/i18n-context';
 
 type Props = {
   body: string;
@@ -32,13 +33,14 @@ const components: Components = {
   input: () => null,
   li: function ChecklistItem({ node, children, className, ...props }) {
     const context = useContext(ChecklistContext);
+    const { t } = useI18n();
     if (!context) return <li {...props} className={className}>{children}</li>;
     const { body, autoChecklist, disabled, onToggle } = context;
     const offset = node?.position?.start.offset;
     const line = offset === undefined ? null : inspectChecklistLine(body, offset);
     const nested = node?.children.some(child => child.type === 'element' && (child.tagName === 'ul' || child.tagName === 'ol'));
     const interactive = line && (line.explicit || (autoChecklist && !nested));
-    const label = itemLabel(node as MarkdownNode).trim().replace(/\s+/g, ' ') || '項目';
+    const label = itemLabel(node as MarkdownNode).trim().replace(/\s+/g, ' ') || t('項目');
     return <li {...props} className={[className, interactive && 'markdown-check-item', interactive && line.checked && 'markdown-check-checked'].filter(Boolean).join(' ') || undefined}>
       {interactive && <button
         type="button"

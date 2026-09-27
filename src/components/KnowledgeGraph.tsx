@@ -4,7 +4,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { ArrowUpRight, Focus, Minus, Plus, Search, Sparkles, X } from 'lucide-react';
 import type { Entry, EntryKind } from '@/lib/types';
-import { kindLabels } from '@/lib/types';
+import { useI18n } from '@/components/I18nProvider';
 import { buildKnowledgeGraph } from '@/lib/knowledge-graph';
 import styles from './KnowledgeGraph.module.css';
 import { useGraphCamera } from './useGraphCamera';
@@ -19,6 +19,7 @@ const preview = (body: string) => body.replace(/<!--[\s\S]*?-->/g, '').replace(/
 export default function KnowledgeGraph({ entries, loading, focusId, onFocus, onOpen, motion = true }: {
   entries: Entry[]; loading: boolean; motion?: boolean; focusId: string | null; onFocus: (id: string | null) => void; onOpen: (entry: Entry) => void;
 }) {
+  const { t, kindLabels } = useI18n();
   const glowId = useId().replace(/:/g, '');
   const [query, setQuery] = useState('');
   const [sharedTags, setSharedTags] = useState(true);
@@ -93,7 +94,7 @@ export default function KnowledgeGraph({ entries, loading, focusId, onFocus, onO
   };
   const labelAnchor = (x: number) => x * camera.zoom + camera.x < 80 / fitScale ? 'start' : x * camera.zoom + camera.x > worldWidth - 80 / fitScale ? 'end' : 'middle';
   const topics = useMemo(() => {
-    const placed = constellations.groups.filter(group => group.nodeIds.length >= 2).map(group => ({ id: group.id, tag: group.label, x: group.x, y: group.y + group.ry + 20 / screenScale, count: group.nodeIds.length }));
+    const placed = constellations.groups.filter(group => group.nodeIds.length >= 2).map(group => ({ id: group.id, tag: group.id === 'other' ? t('その他の記憶') : group.label, x: group.x, y: group.y + group.ry + 20 / screenScale, count: group.nodeIds.length }));
     // Lay captions out in the visible viewport, including SVG letterboxing and
     // the current camera, so they also avoid the caption and zoom controls.
     const offsetX = (viewport.width - worldWidth * fitScale) / 2;
@@ -112,7 +113,8 @@ export default function KnowledgeGraph({ entries, loading, focusId, onFocus, onO
       labelX: (topic.labelX - offsetX) / screenScale - camera.x / camera.zoom,
       labelY: (topic.labelY - offsetY) / screenScale - camera.y / camera.zoom,
     }));
-  }, [constellations, positions, screenScale, worldWidth, viewport, fitScale, camera]);
+  }, [constellations, positions, screenScale, worldWidth, viewport, fitScale, camera, t]);
+  const connectionReason = (reason: string) => reason.startsWith('共通タグ: ') ? t('共通タグ: {tag}', { tag: reason.slice('共通タグ: '.length) }) : t(reason);
   // Keep the selected title first, then admit labels only where they have room.
   const labelIds = new Set<string>();
   const occupied: { x: number; y: number; width: number; height: number }[] = [];
@@ -135,24 +137,24 @@ export default function KnowledgeGraph({ entries, loading, focusId, onFocus, onO
     onFocus(id); setQuery('');
   }
 
-  return <section className={styles.page} aria-label="知識の星図">
+  return <section className={styles.page} aria-label={t('知識の星図')}>
     <header className={styles.heading}>
-      <div><span className={styles.overline}>MUNIN / CONSTELLATIONS</span><h1>知識の星図</h1><p>ひとつの記憶から、思いがけないつながりへ。</p></div>
-      <div className={styles.totals}><strong>{graph.total}<small>記録</small></strong><span>／</span><strong>{graph.edges.length}<small>つながり</small></strong></div>
+      <div><span className={styles.overline}>MUNIN / CONSTELLATIONS</span><h1>{t('知識の星図')}</h1><p>{t('ひとつの記憶から、思いがけないつながりへ。')}</p></div>
+      <div className={styles.totals}><strong>{graph.total}<small>{t('記録')}</small></strong><span>／</span><strong>{graph.edges.length}<small>{t('つながり')}</small></strong></div>
     </header>
     <div className={`${styles.workspace} ${!selected ? styles.overview : ''}`}>
       <div className={styles.mapPanel}>
         <div className={styles.toolbar}>
           <div className={styles.searchWrap}>
-            <label className={styles.search}><Search size={16}/><input aria-label="星図の記録を検索" value={query} onChange={event => setQuery(event.target.value)} placeholder="記録やタグから探す"/>{query && <button aria-label="検索をクリア" onClick={() => setQuery('')}><X size={16}/></button>}</label>
-            {query.trim() && <div className={styles.results} aria-label="星図の検索結果"><small>{matching.length}件の記録</small>{matching.slice(0, 20).map(entry => <button key={entry.id} aria-label={`${entry.title}のつながりを見る`} onClick={() => choose(entry.id, true)}><i style={{ background: colors[entry.kind] }}/><span>{entry.title}</span><ArrowUpRight size={14}/></button>)}{matching.length === 0 && <p>見つかりませんでした。別の言葉で探してみてください。</p>}{matching.length > 20 && <p>先頭20件を表示しています。言葉を追加して絞り込めます。</p>}</div>}
+            <label className={styles.search}><Search size={16}/><input aria-label={t('星図の記録を検索')} value={query} onChange={event => setQuery(event.target.value)} placeholder={t('記録やタグから探す')}/>{query && <button aria-label={t('検索をクリア')} onClick={() => setQuery('')}><X size={16}/></button>}</label>
+            {query.trim() && <div className={styles.results} aria-label={t('星図の検索結果')}><small>{t('{count}件の記録', { count: matching.length })}</small>{matching.slice(0, 20).map(entry => <button key={entry.id} aria-label={t('{title}のつながりを見る', { title: entry.title })} onClick={() => choose(entry.id, true)}><i style={{ background: colors[entry.kind] }}/><span>{entry.title}</span><ArrowUpRight size={14}/></button>)}{matching.length === 0 && <p>{t('見つかりませんでした。別の言葉で探してみてください。')}</p>}{matching.length > 20 && <p>{t('先頭20件を表示しています。言葉を追加して絞り込めます。')}</p>}</div>}
           </div>
-          <div className={styles.mode} aria-label="星図の表示範囲"><button aria-pressed={!isLocal} onClick={() => { setLocal(false); reset(); }}>全体</button><button aria-pressed={isLocal} disabled={!selected} onClick={() => { setLocal(true); reset(); }}>周辺だけ</button></div>
+          <div className={styles.mode} aria-label={t('星図の表示範囲')}><button aria-pressed={!isLocal} onClick={() => { setLocal(false); reset(); }}>{t('全体')}</button><button aria-pressed={isLocal} disabled={!selected} onClick={() => { setLocal(true); reset(); }}>{t('周辺だけ')}</button></div>
         </div>
         <div className={styles.canvas} ref={canvasRef}><GraphSky enabled={motion}/>
-          <div className={styles.mapCaption}><span>{detailLevel === 'overview' ? `${constellations.groups.length}の星座に広がる記憶` : detailLevel === 'names' ? '記録の名前' : '記録を詳しく見る'}</span><small>{mobile ? '2本指で拡大・縮小' : 'ホイールで拡大・縮小'} · {Math.round(camera.zoom * 100)}%</small></div>
-          {mobile && selected && <div className={styles.mobileSelection}><span>{selected.title}<small>{adjacent.length}件のつながり</small></span><button onClick={() => inspectorRef.current?.scrollIntoView({ block: 'start' })}>関連を見る</button><button aria-label="選択した記録を開く" onClick={() => onOpen(selected)}><ArrowUpRight size={17}/></button></div>}
-          {loading ? <div className={styles.empty} role="status"><Sparkles/><h2>記憶をつないでいます</h2></div> : nodes.length === 0 ? <div className={styles.empty}><Sparkles/><h2>最初の記憶が、星になる。</h2><p>記録を残すと、ここに星が増えていきます。<br/>タグや関連する記録で、つながりを育てましょう。</p></div> : <svg ref={svg} className={styles.svg} viewBox={`0 0 ${worldWidth} ${worldHeight}`} role="group" aria-label="記録のつながり" data-zoom={camera.zoom} data-detail-level={detailLevel} {...bind}>
+          <div className={styles.mapCaption}><span>{detailLevel === 'overview' ? t('{count}の星座に広がる記憶', { count: constellations.groups.length }) : detailLevel === 'names' ? t('記録の名前') : t('記録を詳しく見る')}</span><small>{mobile ? t('2本指で拡大・縮小') : t('ホイールで拡大・縮小')} · {Math.round(camera.zoom * 100)}%</small></div>
+          {mobile && selected && <div className={styles.mobileSelection}><span>{selected.title}<small>{t('{count}件のつながり', { count: adjacent.length })}</small></span><button onClick={() => inspectorRef.current?.scrollIntoView({ block: 'start' })}>{t('関連を見る')}</button><button aria-label={t('選択した記録を開く')} onClick={() => onOpen(selected)}><ArrowUpRight size={17}/></button></div>}
+          {loading ? <div className={styles.empty} role="status"><Sparkles/><h2>{t('記憶をつないでいます')}</h2></div> : nodes.length === 0 ? <div className={styles.empty}><Sparkles/><h2>{t('最初の記憶が、星になる。')}</h2><p>{t('記録を残すと、ここに星が増えていきます。')}<br/>{t('タグや関連する記録で、つながりを育てましょう。')}</p></div> : <svg ref={svg} className={styles.svg} viewBox={`0 0 ${worldWidth} ${worldHeight}`} role="group" aria-label={t('記録のつながり')} data-zoom={camera.zoom} data-detail-level={detailLevel} {...bind}>
             <defs>{kinds.map(kind => <radialGradient key={kind} id={`${glowId}-${kind}`}><stop offset="0" stopColor={colors[kind]} stopOpacity=".8"/><stop offset=".32" stopColor={colors[kind]} stopOpacity=".32"/><stop offset="1" stopColor={colors[kind]} stopOpacity="0"/></radialGradient>)}{constellations.groups.map((group, index) => <radialGradient key={group.id} id={`${glowId}-realm-${index}`}><stop stopColor={group.color} stopOpacity=".22"/><stop offset=".45" stopColor={group.color} stopOpacity=".09"/><stop offset="1" stopColor={group.color} stopOpacity="0"/></radialGradient>)}</defs>
             <g transform={`translate(${camera.x} ${camera.y}) scale(${camera.zoom})`}>
               <g aria-hidden="true" className={styles.realms}>{constellations.groups.map((group, index) => <g key={group.id} data-constellation="true" data-group-id={group.id} className={`${styles.realm} ${selected && !group.nodeIds.includes(selected.id) ? styles.realmQuiet : ''}`} style={{ '--phase': `${index * -4}s`, '--realm-color': group.color } as CSSProperties}>
@@ -177,8 +179,8 @@ export default function KnowledgeGraph({ entries, loading, focusId, onFocus, onO
                 const labelled = labelIds.has(node.entry.id);
                 const major = anchors.has(node.entry.id) && node.degree > 0;
                 const size = (active ? 4.5 : major ? 3.8 : 1.9 + Math.min(.8, Math.sqrt(node.degree) * .12)) / screenScale;
-                return <g key={node.entry.id} data-node-id={node.entry.id} data-group-id={membership.get(node.entry.id)?.id} role="button" tabIndex={0} aria-label={`${node.entry.title}のつながりを見る`} aria-pressed={active} transform={`translate(${point.x} ${point.y})`} className={`${styles.node} ${major ? styles.major : ''} ${active ? styles.selected : ''} ${dim ? styles.dim : ''}`} style={{ '--star': colors[node.entry.kind], '--phase': `${index * -.73}s`, '--period': `${7 + index % 7}s` } as CSSProperties} onClick={() => { if (!suppressClick()) choose(node.entry.id); }} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); choose(node.entry.id); } }}>
-                  <title>{node.entry.title} · {kindLabels[node.entry.kind]} · {node.degree}件のつながり</title>
+                return <g key={node.entry.id} data-node-id={node.entry.id} data-group-id={membership.get(node.entry.id)?.id} role="button" tabIndex={0} aria-label={t('{title}のつながりを見る', { title: node.entry.title })} aria-pressed={active} transform={`translate(${point.x} ${point.y})`} className={`${styles.node} ${major ? styles.major : ''} ${active ? styles.selected : ''} ${dim ? styles.dim : ''}`} style={{ '--star': colors[node.entry.kind], '--phase': `${index * -.73}s`, '--period': `${7 + index % 7}s` } as CSSProperties} onClick={() => { if (!suppressClick()) choose(node.entry.id); }} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); choose(node.entry.id); } }}>
+                  <title>{node.entry.title} · {kindLabels[node.entry.kind]} · {t('{count}件のつながり', { count: node.degree })}</title>
                   <circle r={hitRadii.get(node.entry.id)} fill="transparent"/>
                   <circle className={styles.corona} r={size + (major ? 24 : 10) / screenScale} style={{ fill: `url(#${glowId}-${node.entry.kind})` }}/><circle className={styles.halo} r={size + (major ? 13 : 5) / screenScale} style={{ fill: `url(#${glowId}-${node.entry.kind})` }}/>
                   {major && <><circle r={11 / screenScale} className={styles.principalRing}/><path className={styles.principalRay} d={`M${-20 / screenScale} 0H${20 / screenScale}M0 ${-25 / screenScale}V${25 / screenScale}`} style={{ strokeWidth: .65 / screenScale }}/></>}
@@ -187,32 +189,32 @@ export default function KnowledgeGraph({ entries, loading, focusId, onFocus, onO
                   <text data-graph-label="true" y={size + 12 / screenScale} textAnchor={labelAnchor(point.x)} className={`${styles.label} ${labelled ? styles.labelVisible : ''}`} style={{ strokeWidth: 3 / screenScale }} fontSize={(mobile ? 10 : 11) / screenScale}>{labelText(node.entry)}</text>
                 </g>;
               })}
-              {detailLevel === 'overview' && !selected && topics.map(topic => <g key={topic.id} className={`${styles.topic} ${styles.constellationTitle}`} role="button" tabIndex={0} aria-label={`${topic.tag}の集まりを拡大`} transform={`translate(${topic.labelX} ${topic.labelY}) scale(${1 / screenScale})`} onClick={() => { if (!suppressClick()) focusAt(topic.x, topic.y, 2.4); }} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); focusAt(topic.x, topic.y, 2.4); } }}>
+              {detailLevel === 'overview' && !selected && topics.map(topic => <g key={topic.id} className={`${styles.topic} ${styles.constellationTitle}`} role="button" tabIndex={0} aria-label={t('{tag}の集まりを拡大', { tag: topic.tag })} transform={`translate(${topic.labelX} ${topic.labelY}) scale(${1 / screenScale})`} onClick={() => { if (!suppressClick()) focusAt(topic.x, topic.y, 2.4); }} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); focusAt(topic.x, topic.y, 2.4); } }}>
                 <rect x={-topic.width / 2} y={-topic.height / 2} width={topic.width} height={topic.height} rx={2}/><path d={`M${-topic.width / 2 + 10} 15H${topic.width / 2 - 10}`}/><text textAnchor="middle" y={-2}>{topic.tag.length > 12 ? `${topic.tag.slice(0,12)}…` : topic.tag}</text><text className={styles.constellationMeta} textAnchor="middle" y={11}>{topic.count} RECORDS</text>
               </g>)}
             </g>
           </svg>}
-          <div className={styles.zoom} aria-label="星図の拡大操作"><button aria-label="星図を縮小" onClick={() => zoomBy(.8)} disabled={camera.zoom <= 0.65}><Minus size={17}/></button><button aria-label="星図を全体に合わせる" onClick={() => reset()}><Focus size={17}/></button><button aria-label="星図を拡大" onClick={() => zoomBy(1.25)} disabled={camera.zoom >= 6}><Plus size={17}/></button></div>
-          <span className={styles.hint}>{detailLevel === 'overview' ? '拡大すると、記録名が見えます' : '点をタップ → 関連を見る'}</span>
+          <div className={styles.zoom} aria-label={t('星図の拡大操作')}><button aria-label={t('星図を縮小')} onClick={() => zoomBy(.8)} disabled={camera.zoom <= 0.65}><Minus size={17}/></button><button aria-label={t('星図を全体に合わせる')} onClick={() => reset()}><Focus size={17}/></button><button aria-label={t('星図を拡大')} onClick={() => zoomBy(1.25)} disabled={camera.zoom >= 6}><Plus size={17}/></button></div>
+          <span className={styles.hint}>{detailLevel === 'overview' ? t('拡大すると、記録名が見えます') : t('点をタップ → 関連を見る')}</span>
         </div>
         <div className={styles.legend}>{kinds.filter(kind => eligible.some(entry => entry.kind === kind)).map(kind => <span key={kind}><i style={{ background: colors[kind] }}/>{kindLabels[kind]}</span>)}</div>
-        <div className={styles.options}><label><input type="checkbox" checked={sharedTags} onChange={event => setSharedTags(event.target.checked)}/>共通タグ</label><label><input type="checkbox" checked={includeArchived} onChange={event => setIncludeArchived(event.target.checked)}/>アーカイブを含める</label><span>実線：関連・所属　点線：共通タグ<br/>全体では線を整理。星を選ぶと、そのつながりをすべて表示。</span></div>
-        {graph.truncated && <p className={styles.limit}>全{graph.total}件のうち{graph.nodes.length}件を表示しています。検索すると、ほかの記録も選べます。</p>}
+        <div className={styles.options}><label><input type="checkbox" checked={sharedTags} onChange={event => setSharedTags(event.target.checked)}/>{t('共通タグ')}</label><label><input type="checkbox" checked={includeArchived} onChange={event => setIncludeArchived(event.target.checked)}/>{t('アーカイブを含める')}</label><span>{t('実線：関連・所属　点線：共通タグ')}<br/>{t('全体では線を整理。星を選ぶと、そのつながりをすべて表示。')}</span></div>
+        {graph.truncated && <p className={styles.limit}>{t('全{total}件のうち{shown}件を表示しています。検索すると、ほかの記録も選べます。', { total: graph.total, shown: graph.nodes.length })}</p>}
       </div>
-      <aside ref={inspectorRef} className={styles.inspector} aria-label="選択した記録" aria-live="polite">
+      <aside ref={inspectorRef} className={styles.inspector} aria-label={t('選択した記録')} aria-live="polite">
         {selected ? <>
-          <div className={styles.inspectorTop}><span><i style={{ background: colors[selected.kind] }}/>{kindLabels[selected.kind]}{selected.status === 'archived' ? ' · アーカイブ' : ''}</span><button aria-label="星図の選択を解除" onClick={() => { onFocus(null); setLocal(false); reset(); }}><X size={17}/></button></div>
-          <h2>{selected.title}</h2><p className={styles.excerpt}>{preview(selected.body).slice(0, 180) || '本文はまだありません。'}</p>
+          <div className={styles.inspectorTop}><span><i style={{ background: colors[selected.kind] }}/>{kindLabels[selected.kind]}{selected.status === 'archived' ? ` · ${t('アーカイブ')}` : ''}</span><button aria-label={t('星図の選択を解除')} onClick={() => { onFocus(null); setLocal(false); reset(); }}><X size={17}/></button></div>
+          <h2>{selected.title}</h2><p className={styles.excerpt}>{preview(selected.body).slice(0, 180) || t('本文はまだありません。')}</p>
           {selected.tags.length > 0 && <div className={styles.tags}>{selected.tags.map(tag => <span key={tag}># {tag}</span>)}</div>}
-          <button className={styles.open} onClick={() => onOpen(selected)}>記録を開く<ArrowUpRight size={17}/></button>
-          <div className={styles.connectionsTitle}><h3>つながっている記録</h3><span>{adjacent.length}</span></div>
+          <button className={styles.open} onClick={() => onOpen(selected)}>{t('記録を開く')}<ArrowUpRight size={17}/></button>
+          <div className={styles.connectionsTitle}><h3>{t('つながっている記録')}</h3><span>{adjacent.length}</span></div>
           <div className={styles.connections}>{adjacent.map(edge => {
             const id = edge.source === selected.id ? edge.target : edge.source;
             const entry = eligible.find(item => item.id === id);
-            return entry ? <button key={id} onClick={() => choose(id, true)} aria-label={`${entry.title}のつながりを見る`}><i style={{ background: colors[entry.kind] }}/><span><strong>{entry.title}</strong><small>{edge.reasons.join(' / ')}</small></span><ArrowUpRight size={14}/></button> : null;
+            return entry ? <button key={id} onClick={() => choose(id, true)} aria-label={t('{title}のつながりを見る', { title: entry.title })}><i style={{ background: colors[entry.kind] }}/><span><strong>{entry.title}</strong><small>{edge.reasons.map(connectionReason).join(' / ')}</small></span><ArrowUpRight size={14}/></button> : null;
           })}</div>
-          {adjacent.length === 0 && <p className={styles.note}>まだつながりがありません。記録の編集でタグや関連する記録を追加できます。</p>}
-        </> : <div className={styles.welcome}><svg className={styles.seal} viewBox="0 0 160 130" aria-hidden="true"><circle cx="80" cy="65" r="52"/><path d="M30 80L66 27L102 70L136 44M30 80L90 110L102 70L66 27"/>{[[30,80],[66,27],[102,70],[136,44],[90,110]].map(([x,y])=><g key={x}><circle cx={x} cy={y} r="6"/><circle cx={x} cy={y} r="2"/></g>)}</svg><span className={styles.overline}>FOLLOW A THOUGHT</span><h2>つながりから探す。</h2><p>まず拡大して、記録名を表示。<br/>点を選ぶと、その記録につながる線と<br/>関連する記録が見えます。</p><div className={styles.exampleLine}><i/><span/><i/></div><small>記録は点に。つながりは線に。<br/>共通のタグも、発見の手がかりになります。</small>{focusId && <p className={styles.note}>選択した記録は現在の表示対象にありません。</p>}</div>}
+          {adjacent.length === 0 && <p className={styles.note}>{t('まだつながりがありません。記録の編集でタグや関連する記録を追加できます。')}</p>}
+        </> : <div className={styles.welcome}><svg className={styles.seal} viewBox="0 0 160 130" aria-hidden="true"><circle cx="80" cy="65" r="52"/><path d="M30 80L66 27L102 70L136 44M30 80L90 110L102 70L66 27"/>{[[30,80],[66,27],[102,70],[136,44],[90,110]].map(([x,y])=><g key={x}><circle cx={x} cy={y} r="6"/><circle cx={x} cy={y} r="2"/></g>)}</svg><span className={styles.overline}>FOLLOW A THOUGHT</span><h2>{t('つながりから探す。')}</h2><p>{t('まず拡大して、記録名を表示。')}<br/>{t('点を選ぶと、その記録につながる線と')}<br/>{t('関連する記録が見えます。')}</p><div className={styles.exampleLine}><i/><span/><i/></div><small>{t('記録は点に。つながりは線に。')}<br/>{t('共通のタグも、発見の手がかりになります。')}</small>{focusId && <p className={styles.note}>{t('選択した記録は現在の表示対象にありません。')}</p>}</div>}
       </aside>
     </div>
   </section>;

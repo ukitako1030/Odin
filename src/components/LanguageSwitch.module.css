@@ -1,0 +1,7 @@
+.switch{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;width:100%;margin:18px 0;color:#bec6da}
+.label{font-size:12px;letter-spacing:.04em}
+.options{display:flex;gap:3px;padding:3px;background:#080f1dc9;border:1px solid #8d87a34a;border-radius:6px}
+.switch .options button{appearance:none;width:auto;min-width:76px;min-height:44px;height:auto;margin:0;padding:9px 14px;display:block;border:1px solid transparent;border-radius:3px;background:transparent;color:#adb6cb;font:inherit;font-size:13px;line-height:1.4;cursor:pointer;transition:background .15s,color .15s}
+.switch .options button[aria-pressed=true]{background:#74658a55;border-color:#b3a1cc70;color:#f9f6ff}
+.switch .options button:hover:not(:disabled){background:#74658a33;transform:none}
+.switch .options button:focus-visible{outline:2px solid #cbb4ee;outline-offset:3px}

@@ -1,6 +1,7 @@
 import test, { type TestContext } from 'node:test';
 import assert from 'node:assert/strict';
 import { lstat, mkdtemp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { unzipSync, strFromU8 } from 'fflate';
@@ -17,6 +18,11 @@ async function fixture(t: TestContext) {
     interface: { displayName: 'Odin Memory' },
   }));
   await writeFile(path.join(templateRoot, 'skills', 'odin-memory', 'SKILL.md'), '# Odin memory\n');
+  await writeFile(path.join(templateRoot, '.codex-plugin', 'plugin.en.json'), JSON.stringify({
+    name: 'odin-memory', version: '0.1.0', description: 'Search and save your Odin records',
+    author: { name: 'Odin' }, interface: { displayName: 'Odin Memory' },
+  }));
+  await writeFile(path.join(templateRoot, 'skills', 'odin-memory', 'SKILL.en.md'), '# Odin memory in English\n');
   return { root, templateRoot };
 }
 
@@ -67,6 +73,42 @@ test('registered App package preserves its ID and does not duplicate MCP configu
   const names = Object.keys(unzipSync(new Uint8Array(await readFile(path.join(result.output, 'odin-memory.zip')))));
   assert.ok(names.includes('.app.json'));
   assert.ok(!names.includes('.mcp.json') && !names.includes('mcp.json'));
+});
+
+test('English MCP package selects only English templates and keeps standard output names', async (t) => {
+  const { root, templateRoot } = await fixture(t);
+  await writeFile(path.join(templateRoot, 'secret.txt'), 'private-secret');
+  const result = await generatePlugin({ url: 'https://odin.example', output: path.join(root, 'english'), templateRoot, language: 'en' });
+  const legacy = await parse(path.join(result.pluginRoot, '.codex-plugin', 'plugin.json'));
+  const portable = await parse(path.join(result.pluginRoot, 'plugin.json'));
+  assert.equal(legacy.description, 'Search and save your Odin records');
+  assert.equal(portable.description, legacy.description);
+  assert.equal(legacy.mcpServers, './.mcp.json');
+  assert.equal((await readFile(path.join(result.pluginRoot, 'skills', 'odin-memory', 'SKILL.md'), 'utf8')).trim(), '# Odin memory in English');
+  const archive = unzipSync(new Uint8Array(await readFile(path.join(result.output, 'odin-memory.zip'))));
+  assert.deepEqual(Object.keys(archive).sort(), ['.codex-plugin/plugin.json', '.mcp.json', 'mcp.json', 'plugin.json', 'skills/odin-memory/SKILL.md'].sort());
+  assert.ok(!Object.values(archive).some((contents) => strFromU8(contents).includes('private-secret')));
+  assert.match(await readFile(path.join(result.output, 'README.md'), 'utf8'), /Endpoint:.*https:\/\/odin\.example\/api\/mcp/);
+});
+
+test('English App package keeps App mode and English diagnostics', async (t) => {
+  const { root, templateRoot } = await fixture(t);
+  const result = await generatePlugin({ url: 'https://odin.example', appId: 'asdk_app_English', output: path.join(root, 'english-app'), templateRoot, language: 'en' });
+  const legacy = await parse(path.join(result.pluginRoot, '.codex-plugin', 'plugin.json'));
+  assert.equal(legacy.apps, './.app.json');
+  assert.equal(legacy.mcpServers, undefined);
+  assert.match(await readFile(path.join(result.output, 'README.md'), 'utf8'), /Registered App ID: `asdk_app_English`/);
+  await assert.rejects(generatePlugin({ url: 'http://odin.example', language: 'en', templateRoot, output: path.join(root, 'bad-url') }), /public HTTPS origin/);
+  await assert.rejects(generatePlugin({ url: 'https://odin.example', language: 'fr', templateRoot, output: path.join(root, 'bad-language') }), /Language must be ja or en/);
+  await assert.rejects(lstat(path.join(root, 'bad-language')), { code: 'ENOENT' });
+});
+
+test('CLI shows English help and rejects an invalid language', () => {
+  const script = path.resolve('scripts/setup-plugin.mjs');
+  const help = execFileSync(process.execPath, [script, '--language', 'en', '--help'], { encoding: 'utf8' });
+  assert.match(help, /^Usage:/);
+  assert.match(help, /--language ja\|en/);
+  assert.throws(() => execFileSync(process.execPath, [script, '--language', 'invalid'], { encoding: 'utf8', stdio: 'pipe' }), /Language must be ja or en/);
 });
 
 test('rejects unsafe URLs and IDs without echoing secret input', async (t) => {
