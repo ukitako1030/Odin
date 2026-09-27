@@ -6,6 +6,8 @@ Odin's web UI, REST API, and MCP work with the same records. The connected AI ha
 
 **Using the distributable plugin?** Register your own connection below first, then generate connection files using the [plugin setup guide](PLUGIN-SETUP.en.md). You do not need to write a plugin from scratch.
 
+The creator built Odin to capture notes, tasks, and shopping lists without interrupting a GPT Live conversation. An equivalent voice workflow with other AI products has not been verified.
+
 ## Use from ChatGPT (public HTTPS Odin)
 
 ChatGPT MCP access requires an Odin instance on public HTTPS and a separate OAuth authorization server. Do not paste `ODIN_API_TOKEN` into ChatGPT. Odin validates access tokens as an OAuth **resource server**; it does not provide OAuth login screens, token issuance, or client registration. Use a service such as Auth0. The web login password (`ODIN_OWNER_PASSWORD`) is separate from OAuth login. See [Setup](SETUP.en.md) for deployment.
@@ -61,7 +63,7 @@ bearer_token_env_var = "ODIN_API_TOKEN"
 
 ## Common operations for other AI clients
 
-An MCP-capable client can use public HTTPS `/api/mcp` with OAuth, or a bearer token if the client supports it. Check each product's capabilities and setup screens. In an environment without MCP access, you can organize a conversation with an AI such as Gemini and transfer it through Odin's web UI or REST CLI. In every case, verify both connection and saving and reading a record back.
+An MCP-capable client can use public HTTPS `/api/mcp` with OAuth, or a bearer token if the client supports it. Check each product's capabilities and setup screens. Without an MCP connection, manually copying text into Odin is a separate workflow from saving directly during a conversation. In every case, verify both connection and saving and reading a record back.
 
 Odin MCP offers status, search, fetch, history, create, update, completion, trash, restore, and conversation-import tools. When retrying creation, use the same `idempotencyKey` and the same content. If the outcome is unclear, do not retry with a new key. Conversation import candidates do not enter the primary store until you confirm them in the review screen.
 

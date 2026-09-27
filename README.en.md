@@ -2,31 +2,31 @@
 
 <p align="center"><img src="public/assets/odin-wordmark-silver.webp" width="300" alt="Odin" /></p>
 
-<h1 align="center">Odin — Personal knowledge and tasks, connected to your AI</h1>
+<h1 align="center">Odin — Notes, tasks, and shopping lists from GPT Live conversations</h1>
 
-<p align="center">Save knowledge, ideas, and tasks from AI conversations to your own Google Drive.<br />Search, edit, and manage them from your computer or phone.</p>
+<p align="center">Turn what you discuss in GPT Live into notes, tasks, and shopping lists in your own Google Drive.<br />Search and edit them from your computer or phone.</p>
 
 <p align="center"><a href="#how-it-works">How it works</a> · <a href="#try-it-locally">Try it locally</a> · <a href="#connect-drive-and-your-ai">Connect Drive and your AI</a></p>
 
-![Odin home screen with tasks and links to your notes](docs/images/readme-home.webp)
+![Odin home screen with tasks and links to your notes](docs/images/readme-home-en.webp)
 
 ## How it works
 
 ![Ask your AI to save something to Odin. Odin stores it as Markdown in your Google Drive, ready to search, edit, and manage on your computer or phone.](docs/images/readme-workflow-en.webp)
 
-> Tell your AI, “Save this to Odin.” Pick it up later on your phone.
+> Tell GPT Live, “Save this to Odin.” Pick it up later on your phone.
 
-Your connected AI organizes the content and saves it to Drive through Odin. The creator uses this workflow while talking with GPT Live to capture notes and tasks.
+The creator uses Odin to capture conversation details, tasks, and shopping lists without interrupting a GPT Live conversation. The connected AI organizes the content and saves it to Drive through Odin.
 
-| Ask your AI | Use it in Odin |
+| Example requests in GPT Live | Use it in Odin |
 | --- | --- |
 | “Summarize what we found and save it.” | Search and edit the key points and sources later |
 | “Add what we just agreed to my tasks.” | See what needs doing and check it off |
-| “Keep this idea for later.” | Organize it alongside related notes and projects |
+| “Add milk and eggs to my shopping list.” | Check what to buy and mark purchases done |
 
-You need to connect your AI and Google Drive first. Plugin and voice-mode availability depends on the product and your account.
+You need to connect ChatGPT and Google Drive first. Tool access during voice conversations varies by product, account, and mode. An equivalent experience with other AI products has not been verified.
 
-<p align="center"><img src="docs/images/readme-mobile-home.webp" width="245" alt="Checking tasks on a phone" /> <img src="docs/images/readme-mobile-tasks.webp" width="245" alt="Managing tasks on a phone" /></p>
+<p align="center"><img src="docs/images/readme-mobile-home-en.webp" width="220" alt="Checking tasks on a phone" /> <img src="docs/images/readme-mobile-tasks-en.webp" width="220" alt="Managing tasks on a phone" /> <img src="docs/images/readme-mobile-shopping-en.webp" width="220" alt="Checking items off an English shopping list" /></p>
 
 ## Features
 
@@ -41,17 +41,17 @@ You need to connect your AI and Google Drive first. Plugin and voice-mode availa
 <details>
 <summary>See the knowledge map and record details</summary>
 
-![The knowledge map connects related records](docs/images/readme-graph.webp)
+![The knowledge map connects related records](docs/images/readme-graph-en.webp)
 
-<p align="center"><img src="docs/images/readme-memory.webp" width="670" alt="A record with its text, tags, sources, and checklist" /></p>
+<p align="center"><img src="docs/images/readme-memory-en.webp" width="670" alt="A conversation note with its text, tags, source, and related records" /></p>
 
 </details>
 
-Screenshots show the Japanese interface with fictional sample records. You can switch the app to English. The screenshot data differs from the examples included on first launch; the workflow diagram is an illustration.
+Screenshots show the English interface with fictional notes, tasks, and shopping lists. These are real app screens; the workflow diagram is an illustration. The sample records differ from those included on first launch.
 
 ## Why I built it
 
-Copying useful AI conversations into a notes app every time was a chore. I found Obsidian's AI integrations hard to navigate and didn't want another subscription. So I built Odin to **let my usual AI organize things, save them to the Google Drive I already use, and manage them in an interface I enjoy.**
+I wanted to talk naturally in GPT Live and turn the conversation, tasks, and shopping items into records as I went. Copying them into a notes app was a chore; I found Obsidian's AI integrations hard to navigate and didn't want another subscription. I built Odin to **save what I organize with GPT Live to the Google Drive I already use and manage it in an interface I enjoy.**
 
 The name comes from the Norse god Odin and his ravens, Hugin (“thought”) and Munin (“memory”). If I'm opening a tool every day, I want to enjoy it. **The design goes all in on dramatic dark fantasy. Unapologetically.** You can turn off the background animation.
 
@@ -70,7 +70,7 @@ The language choice is remembered in this browser. Records are stored locally as
 
 ## Connect Drive and your AI
 
-Odin is an app you run and host yourself. To save directly from conversations, follow these steps:
+Odin is an app you run and host yourself. To save from GPT Live conversations, follow these steps. The guides also cover technical MCP connections for clients such as Codex; the creator's voice workflow is with GPT Live.
 
 | Step | What to set up | Guide |
 | --- | --- | --- |
