@@ -38,3 +38,11 @@ Match the subtle moonlit blue shading, natural fine hair, premium painted dark f
 ## 配布前に確認すること
 
 今回の造形変更は権利上の判断やライセンス付与を意味しません。以前のコミットには旧人物素材が残ります。公開前には必要に応じて履歴を含めた配布対象を整理し、コード・画像の配布条件を決めてください。リポジトリは引き続き非公開です。
+
+## ワークフローのインフォグラフィック（2026-09-27）
+
+`docs/images/readme-workflow.webp`。内蔵画像生成で新規制作し、WebPへ符号化。人物・ブランドロゴなどの参照画像は使用していません。図内のデバイス画面は説明用イラストです。
+
+```text
+Japanese infographic for Odin, landscape 3:2, midnight navy/black, blue/violet luminous lines, silver-white legible typography, original Norse ravens, castle and constellations. Clear three-step workflow: 01「AIに話す」「Odinに保存して」「知識・アイデア・やること」; 02「Odinが保存」with silver raven/archive and a two-way vertical link to cloud「自分のGoogle Drive」「Markdownで保管」; 03「あとで活用」with desktop/smartphone「検索・編集・タスク管理」. Header「会話から、使える記録へ。」brand「Odin」. Footer「いつものAI × 自分のDrive × Odin」「利用にはAI・Google Driveとの接続設定が必要です」. Clear arrows, readable at README width, generous whitespace. No third-party logos or franchise characters.
+```

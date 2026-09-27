@@ -10,6 +10,8 @@
 
 ## 使い方の例
 
+![AIに話してOdinへ保存を依頼。Odinが自分のGoogle DriveにMarkdownで保存し、PC・スマホから検索・編集・タスク管理する流れ](docs/images/readme-workflow.webp)
+
 > AIに「今の話、Odinに保存しといて」→ あとでスマホから確認。
 
 接続したAIが内容を整理し、Odinを通じてDriveへ保存します。作者はGPT Liveで話しながら、メモやタスクを残す使い方をしています。
