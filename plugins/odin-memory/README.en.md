@@ -11,4 +11,4 @@ npm run setup:plugin -- --language en
 
 [Connection, generation, and installation guide](../../docs/PLUGIN-SETUP.en.md)
 
-Licensing and redistribution follow the repository's [public release status](../../docs/RELEASE-STATUS.md).
+For reuse permissions, see the repository's [release status](../../docs/RELEASE-STATUS.en.md).

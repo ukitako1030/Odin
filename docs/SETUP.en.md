@@ -101,4 +101,4 @@ npm run build
 npm start
 ```
 
-`npm start` listens on loopback. The distribution repository is still being prepared and remains private. See [Release status](RELEASE-STATUS.en.md).
+`npm start` listens on loopback. See [Release status and usage terms](RELEASE-STATUS.en.md).

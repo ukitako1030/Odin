@@ -35,9 +35,9 @@ The character is composited onto a narrow flat rock whose support spans x=0.24 t
 Match the subtle moonlit blue shading, natural fine hair, premium painted dark fantasy finish. NO ground or rock added, no environment, no background, no shadow plane, no glow cloud, no letters. Keep actual alpha transparency in all negative spaces. Keep the same aspect ratio 1.39 and all weapon/cape tips within image.
 ```
 
-## 配布前に確認すること
+## 権利と再利用条件
 
-今回の造形変更は権利上の判断やライセンス付与を意味しません。以前のコミットには旧人物素材が残ります。公開前には必要に応じて履歴を含めた配布対象を整理し、コード・画像の配布条件を決めてください。リポジトリは引き続き非公開です。
+今回の造形変更は権利上の判断や再利用許諾を意味しません。公開されたGit履歴には旧人物素材も残ります。素材の権利確認は継続中で、コード・画像の再利用許諾は設定していません。
 
 ## ワークフローのインフォグラフィック（2026-09-27）
 

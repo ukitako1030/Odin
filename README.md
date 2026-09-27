@@ -95,4 +95,4 @@ ChatGPTのGoogle Drive連携とは別に、**Odin自身への接続**が必要�
 
 ---
 
-現在は非公開の公開準備版です。コードと画像のライセンス・再配布条件は未確定です。[公開準備の状態](docs/RELEASE-STATUS.md) · [画像素材について](docs/ASSETS.md)
+ソースを公開しています。コードと画像の再利用許諾は設定していません。[公開状況](docs/RELEASE-STATUS.md) · [画像素材について](docs/ASSETS.md)

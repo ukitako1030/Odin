@@ -97,4 +97,4 @@ npm run build
 npm start
 ```
 
-`npm start` はループバックに限定されます。公開用リポジトリ自体はまだ準備中です。状態は[公開準備の状態](RELEASE-STATUS.md)を確認してください。
+`npm start` はループバックに限定されます。ソースの[公開状況と利用条件](RELEASE-STATUS.md)も確認してください。

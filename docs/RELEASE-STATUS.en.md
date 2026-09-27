@@ -2,10 +2,10 @@
 
 # Release status
 
-This repository is a **private release-preparation build**, not a publicly released distribution.
+The source in this repository is public. **No reuse license has been granted for the code or images.**
 
 - The export includes an explicit list of application files, documentation, and selected assets. Personal records, actual environment credentials, and internal operations notes are excluded.
-- Code and image licensing and redistribution terms are not finalized. No reuse license has been granted. Earlier commits contain superseded artwork; asset review and release-history preparation remain necessary before publication. See [the asset review (Japanese)](ASSET-REVIEW.md).
+- Code and image reuse terms have not been set. Public access to the source does not grant permission to reuse it. Earlier commits contain superseded artwork; asset review is ongoing and Git history is retained. See [the asset review (Japanese)](ASSET-REVIEW.md).
 - Configure Google Drive, your AI client, and hosting with your own accounts and credentials. The author's connections are not shared with this package.
 - The interface supports Japanese and English. User-created content is not automatically translated. Choose English in Settings or on the login screen; the default is Japanese.
 - The README, setup guide, AI connection guide, plugin guide, and workflow illustration have English versions. The English README now uses English interface screenshots and fictional English records.
@@ -16,7 +16,7 @@ The Japanese [release log](RELEASE-STATUS.md) records dated checks. Generated pl
 
 Browser checks and screenshots from earlier versions do not verify the current English layout. Any unverified UI behavior is recorded in the release log.
 
-On 2026-09-27, the synchronized distribution passed all 95 unit tests, type checking, and a production webpack build. All seven export-guard tests passed. Relative documentation links, images, heading anchors, and generated English plugin packages were checked. Current desktop/mobile browser checks and E2E were not run because a saved browser permission setting blocks them. Actual account authorization and installation remain unverified. Repository visibility remains PRIVATE.
+On 2026-09-27, the synchronized distribution passed all 95 unit tests, type checking, and a production webpack build. All seven export-guard tests passed. Relative documentation links, images, heading anchors, and generated English plugin packages were checked. Current desktop/mobile browser checks and E2E were not run because a saved browser permission setting blocked them at that time. Actual account authorization and installation remain unverified. The repository was PRIVATE at the time of this check.
 
 ## GPT Live story and English screenshots (2026-09-27)
 

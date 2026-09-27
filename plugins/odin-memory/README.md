@@ -13,4 +13,4 @@ npm run setup:plugin
 
 [接続登録・生成・インストールの手順](../../docs/PLUGIN-SETUP.md)
 
-ライセンス・再配布条件は、リポジトリの[公開準備の状態](../../docs/RELEASE-STATUS.md)に従います。
+再利用許諾の状況は、リポジトリの[公開状況](../../docs/RELEASE-STATUS.md)を確認してください。

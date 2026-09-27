@@ -92,4 +92,4 @@ You must connect **Odin itself**, separately from ChatGPT's Google Drive integra
 
 ---
 
-This repository is still a private release-preparation build. Code and image licensing and redistribution terms have not been finalized. [Release status](docs/RELEASE-STATUS.en.md) · [Image provenance (Japanese)](docs/ASSETS.md)
+The source is public. No reuse license has been granted for the code or images. [Release status](docs/RELEASE-STATUS.en.md) · [Image provenance (Japanese)](docs/ASSETS.md)
