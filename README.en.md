@@ -24,7 +24,9 @@ The creator uses Odin to capture conversation details, tasks, and shopping lists
 | “Add what we just agreed to my tasks.” | See what needs doing and check it off |
 | “Add milk and eggs to my shopping list.” | Check what to buy and mark purchases done |
 
-You need to connect ChatGPT and Google Drive first. Tool access during voice conversations varies by product, account, and mode. An equivalent experience with other AI products has not been verified.
+**Inspired by GPT Live, useful beyond it.** Odin is designed to connect with MCP-capable clients such as Claude, Claude Code, and Codex. Capture conversation highlights or decisions made while coding, then manage them together in the same Odin. [Connection options](docs/AI-CONNECTIONS.en.md#common-operations-for-other-ai-clients)
+
+Connect your AI client and Google Drive first. Tool access during voice conversations varies by product, account, and mode. The creator’s voice workflow is with GPT Live; verify your own connection when using another client.
 
 <p align="center"><img src="docs/images/readme-mobile-home-en.webp" width="220" alt="Checking tasks on a phone" /> <img src="docs/images/readme-mobile-tasks-en.webp" width="220" alt="Managing tasks on a phone" /> <img src="docs/images/readme-mobile-shopping-en.webp" width="220" alt="Checking items off an English shopping list" /></p>
 
@@ -70,7 +72,7 @@ The language choice is remembered in this browser. Records are stored locally as
 
 ## Connect Drive and your AI
 
-Odin is an app you run and host yourself. To save from GPT Live conversations, follow these steps. The guides also cover technical MCP connections for clients such as Codex; the creator's voice workflow is with GPT Live.
+Odin is an app you run and host yourself. To save while chatting or working, follow these steps.
 
 | Step | What to set up | Guide |
 | --- | --- | --- |

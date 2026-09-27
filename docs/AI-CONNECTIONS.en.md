@@ -63,7 +63,15 @@ bearer_token_env_var = "ODIN_API_TOKEN"
 
 ## Common operations for other AI clients
 
-An MCP-capable client can use public HTTPS `/api/mcp` with OAuth, or a bearer token if the client supports it. Check each product's capabilities and setup screens. Without an MCP connection, manually copying text into Odin is a separate workflow from saving directly during a conversation. In every case, verify both connection and saving and reading a record back.
+Odin exposes MCP, so the same Odin can also hold conversation highlights and decisions made while coding.
+
+- **Claude**: register the public HTTPS `/api/mcp` URL as a [custom connector](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp) and configure OAuth.
+- **Claude Code**: connect over HTTP or stdio using its [MCP settings](https://code.claude.com/docs/en/mcp).
+- **Codex**: use the HTTP or stdio configuration in “Use from Codex” above.
+
+These options follow the clients’ documented MCP support and Odin’s interfaces. They do not mean every client or voice mode has been tested with Odin. After connecting, run `odin_status`, save a fictional record, and read it back.
+
+This guide does not provide direct saving during conversations in the Gemini app or Gemini Live. The separate [Gemini CLI supports MCP](https://geminicli.com/docs/tools/mcp-server/), so this is not a claim that all Gemini products lack connectivity. Manually copying text into Odin is a separate workflow from saving directly during a conversation.
 
 Odin MCP offers status, search, fetch, history, create, update, completion, trash, restore, and conversation-import tools. When retrying creation, use the same `idempotencyKey` and the same content. If the outcome is unclear, do not retry with a new key. Conversation import candidates do not enter the primary store until you confirm them in the review screen.
 

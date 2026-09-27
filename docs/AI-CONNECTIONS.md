@@ -63,7 +63,15 @@ bearer_token_env_var = "ODIN_API_TOKEN"
 
 ## ほかのAIと共通の操作
 
-MCP対応クライアントは、公開HTTPSの `/api/mcp` とOAuth、またはクライアントが許す場合はBearer tokenで接続できます。各製品の対応状況や設定画面は個別に確認してください。Geminiなど他のAIで、GPT Liveと同じ会話中の保存体験は検証していません。MCP接続のない環境からWeb画面へ手動で転記する方法は、会話中の直接保存とは別です。どの製品でも、接続できたことと保存・読み戻しできたことは分けて確認します。
+OdinはMCPの接続口を備えているため、GPT Live以外にも会話の要点や開発中の判断を記録する用途へ応用できます。接続先は同じOdinです。
+
+- **Claude**：[カスタムコネクター](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)で公開HTTPSの `/api/mcp` を登録し、OAuthを設定します。
+- **Claude Code**：[MCP設定](https://code.claude.com/docs/en/mcp)からHTTPまたはstdioで接続します。
+- **Codex**：上記「Codexから使う」のHTTP／stdio設定を使います。
+
+これらは各製品のMCP対応とOdinの接続方式に基づく案内です。各クライアントでの実接続・音声利用を一括検証したものではありません。接続後は `odin_status` を確認し、架空の記録を保存して読み戻してください。
+
+Geminiアプリ／Gemini Liveの会話中にOdinへ直接保存する導線は、このガイドでは提供していません。一方、別製品の[Gemini CLIはMCP対応](https://geminicli.com/docs/tools/mcp-server/)です。「Gemini全体で接続できない」という意味ではありません。Web画面への手動転記も、会話中の直接保存とは別の使い方です。
 
 OdinのMCPには状態確認、検索、取得、履歴、作成、更新、完了、ゴミ箱、復元、会話取り込み用のツールがあります。作成の再試行には同じ `idempotencyKey` と同じ内容を使い、応答が不明なまま新しいキーで再作成しないでください。会話取り込みの候補提出は、確認画面で反映するまで正本へ保存されません。
 
